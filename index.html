@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belated Happy Birthday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fdf6f0;
+    --blush:#f6dde2;
+    --rose:#dd93a8;
+    --rose-deep:#b95d78;
+    --plum:#5c2f45;
+    --lilac:#cdb4d8;
+    --gold:#c9a15a;
+    --gold-light:#e8cf9c;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 20% 15%, rgba(205,180,216,0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 80%, rgba(221,147,168,0.30) 0%, transparent 55%),
+      linear-gradient(160deg, var(--cream) 0%, var(--blush) 55%, #f3e2e8 100%);
+    font-family:'Quicksand', sans-serif;
+    color:var(--plum);
+    overflow-x:hidden;
+  }
+
+  .scene{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 6vh 5vw;
+    overflow:hidden;
+  }
+
+  .petals{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    overflow:hidden;
+  }
+  .petal{
+    position:absolute;
+    top:-8vh;
+    opacity:0.85;
+    animation-name: fall, sway;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+    will-change: transform;
+  }
+  .petal svg{ display:block; filter:drop-shadow(0 2px 3px rgba(92,47,69,0.15)); }
+
+  @keyframes fall{
+    0%   { transform: translateY(-10vh) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(360deg); }
+  }
+  @keyframes sway{
+    0%,100%{ margin-left:0px; }
+    50%{ margin-left:40px; }
+  }
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(14px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  @keyframes shimmer{
+    0%{ background-position: 0% center; }
+    100%{ background-position: -220% center; }
+  }
+  @keyframes pulseGlow{
+    0%,100%{ transform:scale(1); opacity:0.7; }
+    50%{ transform:scale(1.12); opacity:1; }
+  }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-4px); }
+  }
+  @keyframes flicker{
+    0%,100%{ opacity:1; transform: scaleY(1); }
+    50%{ opacity:0.75; transform: scaleY(0.88); }
+  }
+  @keyframes floatHeart{
+    0%{ transform: translateY(0) scale(0.6); opacity:0; }
+    15%{ opacity:1; }
+    100%{ transform: translateY(-140px) scale(1.1); opacity:0; }
+  }
+  @keyframes popIn{
+    from{ opacity:0; transform: scale(0.7); }
+    to{ opacity:1; transform: scale(1); }
+  }
+
+  .glow{
+    position:fixed;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    z-index:0;
+    width: min(70vw, 480px);
+    height: min(70vw, 480px);
+    background: radial-gradient(circle, rgba(221,147,168,0.35) 0%, rgba(221,147,168,0) 70%);
+    filter: blur(10px);
+    animation: pulseGlow 5s ease-in-out infinite;
+    pointer-events:none;
+  }
+
+  .corner-sprig{
+    position:fixed;
+    width: clamp(90px, 14vw, 150px);
+    height: auto;
+    z-index:1;
+    opacity:0;
+    animation: fadeUp 1.4s ease-out 0.2s forwards;
+    pointer-events:none;
+  }
+  .sprig-tl{ top: 1.5vh; left: 1.5vw; }
+  .sprig-br{ bottom: 1.5vh; right: 1.5vw; }
+  @media (max-width:600px){ .corner-sprig{ display:none; } }
+
+  /* ================= ENVELOPE STAGE ================= */
+  .envelope-stage{
+    position:relative;
+    z-index:3;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    perspective: 1400px;
+  }
+
+  .hint{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size: clamp(0.95rem, 2.6vw, 1.15rem);
+    color: var(--rose-deep);
+    opacity:0;
+    animation: fadeUp 1s ease-out 1.6s forwards, bob 2.6s ease-in-out 2.6s infinite;
+    text-align:center;
+    transition: opacity 0.4s ease;
+    position:fixed;
+    left:0;
+    right:0;
+    top: calc(50% + min(30vw, 110px) + 2.4rem);
+    z-index:2;
+    width:100%;
+    pointer-events:none;
+    margin:0;
+  }
+
+  .envelope{
+    position:relative;
+    width: min(88vw, 340px);
+    height: min(60vw, 220px);
+    cursor:pointer;
+    opacity:0;
+    transform: translateY(20px) scale(0.96);
+    animation: cardIn 1.2s cubic-bezier(.2,.8,.2,1) 0.3s forwards;
+    transition: opacity 0.6s ease 0.5s;
+  }
+
+  @keyframes cardIn{
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  /* base envelope pocket: pink body + darker triangle pocket built from borders (always behind flap) */
+  .envelope-body{
+    position:absolute;
+    inset:0;
+    background: linear-gradient(160deg, #f3c3d1 0%, #e3a3b8 100%);
+    border-radius: 10px;
+    box-shadow:
+      0 20px 50px -18px rgba(92,47,69,0.4),
+      0 0 0 1px rgba(255,255,255,0.4) inset;
+    z-index:1;
+  }
+
+  /* the V pocket shadow, sits above body, below flap */
+  .env-pocket{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    overflow:hidden;
+    border-radius:10px;
+    transition: opacity 0.5s ease;
+  }
+  .env-pocket::before{
+    content:'';
+    position:absolute;
+    left:0; right:0; bottom:0;
+    top:0;
+    background:
+      linear-gradient(135deg, transparent 49.3%, rgba(185,93,120,0.55) 50%),
+      linear-gradient(225deg, transparent 49.3%, rgba(185,93,120,0.55) 50%);
+    background-size: 50.2% 100%, 50.2% 100%;
+    background-position: left top, right top;
+    background-repeat: no-repeat;
+  }
+
+  /* the letter peeking out from the pocket, BEHIND the flap */
+  .env-letter{
+    position:fixed;
+    left:50%;
+    top:50%;
+    width: min(80vw, 300px);
+    height: min(34vw, 130px);
+    background: #fffaf5;
+    border-radius: 6px;
+    box-shadow: 0 -4px 14px rgba(92,47,69,0.18);
+    z-index:3;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 6%;
+    transform: translate(-50%,-50%) translateY(20%);
+    transition:
+      transform 1.1s cubic-bezier(.22,.8,.25,1) 0.25s,
+      width 1.1s cubic-bezier(.22,.8,.25,1) 0.25s,
+      height 1.1s cubic-bezier(.22,.8,.25,1) 0.25s,
+      border-radius 1.1s cubic-bezier(.22,.8,.25,1) 0.25s,
+      box-shadow 1.1s ease 0.25s;
+  }
+  .env-letter .peek{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    color: var(--rose-deep);
+    font-size: clamp(0.85rem, 2.6vw, 1rem);
+    transition: opacity 0.3s ease;
+  }
+
+  /* the front flap (triangle) — ALWAYS on top at rest, folds down when opened */
+  .env-flap{
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:5;
+    transform-origin: top center;
+    transform-style: preserve-3d;
+    transition: transform 0.9s cubic-bezier(.6,.1,.3,1), opacity 0.5s ease 0.4s;
+  }
+  .env-flap svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 2px 4px rgba(92,47,69,0.2)); }
+
+  .env-seal{
+    position:absolute;
+    top: 40%;
+    left:50%;
+    width:50px !important;
+    height:50px !important;
+    max-width:50px;
+    max-height:50px;
+    transform: translate(-50%,-50%);
+    z-index:6;
+    filter: drop-shadow(0 3px 5px rgba(92,47,69,0.35));
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events:none;
+  }
+  .env-seal svg, svg.env-seal{ width:50px; height:50px; display:block; }
+
+  .envelope:hover .env-flap{ filter:brightness(1.03); }
+
+  /* ---- step 1: flap opens ---- */
+  .envelope-stage.opened .envelope{ cursor:default; }
+  .envelope-stage.opened .env-flap{
+    transform: rotateX(180deg);
+    z-index: 1;
+  }
+  .envelope-stage.opened .env-seal{
+    opacity:0;
+    transform: translate(-50%,-50%) scale(0.5);
+  }
+  .envelope-stage.opened .env-letter{
+    transform: translate(-50%,-50%) translateY(-10%);
+  }
+
+  /* ---- step 2: letter rises fully and expands to cover the envelope ---- */
+  .envelope-stage.grow .env-letter{
+    width: min(88vw, 480px);
+    height: auto;
+    max-height: 88vh;
+    overflow-y: auto;
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;    /* old Edge/IE */
+    align-items: flex-start;
+    border-radius: 24px;
+    transform: translate(-50%,-50%);
+    box-shadow: 0 20px 60px -20px rgba(92,47,69,0.4), 0 0 0 1px rgba(255,255,255,0.5) inset;
+    padding: clamp(1.5rem, 4.5vw, 2.4rem) clamp(1.1rem, 4.5vw, 2rem);
+    z-index:8;
+  }
+  .envelope-stage.grow .env-letter::-webkit-scrollbar{
+    display: none;               /* Chrome/Safari/Edge */
+  }
+  .envelope-stage.grow .env-letter .peek{ opacity:0; position:absolute; }
+  .envelope-stage.grow .envelope,
+  .envelope-stage.grow .env-pocket,
+  .envelope-stage.grow .env-flap{
+    opacity:0;
+  }
+  .envelope-stage.opened .hint,
+  .envelope-stage.grow .hint{
+    opacity:0 !important;
+    animation: none !important;
+    pointer-events:none;
+  }
+
+  .card{
+    position:relative;
+    max-width: 560px;
+    width:100%;
+    text-align:center;
+    opacity:0;
+    transition: opacity 0.9s ease 0.85s;
+    pointer-events:none;
+  }
+  .envelope-stage.grow .card{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .frame{
+    position:absolute;
+    inset: -14px;
+    border: 1.5px solid var(--gold);
+    border-radius: 20px;
+    pointer-events:none;
+    opacity:0.55;
+  }
+
+  .corner{
+    position:absolute;
+    width:40px;
+    height:40px;
+    pointer-events:none;
+    opacity:0.9;
+  }
+  .corner svg{ width:100%; height:100%; }
+  .corner.tl{ top:-20px; left:-20px; }
+  .corner.tr{ top:-20px; right:-20px; transform:scaleX(-1); }
+  .corner.bl{ bottom:-20px; left:-20px; transform:scaleY(-1); }
+  .corner.br{ bottom:-20px; right:-20px; transform:scale(-1,-1); }
+
+  .bloom{
+    width: clamp(38px, 6vw, 52px);
+    height: auto;
+    margin: 0 auto 0.35rem;
+  }
+
+  .eyebrow{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    letter-spacing: 0.3em;
+    text-transform:uppercase;
+    font-size: clamp(0.58rem, 1.4vw, 0.72rem);
+    color: var(--rose-deep);
+  }
+
+  h1.greeting{
+    font-family:'Alex Brush', cursive;
+    font-weight:400;
+    line-height:1.1;
+    margin: 0.3rem 0 0.15rem;
+    font-size: clamp(1.9rem, 6vw, 3.1rem);
+    color: var(--rose-deep);
+    background: linear-gradient(100deg, var(--rose-deep) 20%, var(--gold) 45%, var(--rose-deep) 70%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 28px rgba(201,161,90,0.25);
+  }
+  .envelope-stage.grow h1.greeting{
+    animation: shimmer 6s linear 1.6s infinite;
+  }
+
+  .sub{
+    font-family:'Cormorant Garamond', serif;
+    font-size: clamp(0.88rem, 2.2vw, 1.1rem);
+    font-style: italic;
+    color: var(--plum);
+    margin: 0.2rem 0 0.9rem;
+  }
+
+  .divider{
+    width: 66px;
+    height: 16px;
+    margin: 0 auto 0.9rem;
+  }
+
+  .message{
+    font-family:'Quicksand', sans-serif;
+    font-weight:500;
+    font-size: clamp(0.82rem, 2vw, 0.95rem);
+    line-height:1.6;
+    color: #7a4a5e;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .message strong{
+    color: var(--rose-deep);
+    font-weight:600;
+  }
+
+  .signoff{
+    margin-top: 0.9rem;
+    font-family:'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(0.78rem, 1.9vw, 0.92rem);
+    color: var(--gold);
+    letter-spacing: 0.03em;
+  }
+
+  /* ================= SWEET INTERACTIVE CAKE ================= */
+  .cake-wrap{
+    margin-top: 1rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0.4rem;
+  }
+
+  .cake-hint{
+    font-family:'Quicksand', sans-serif;
+    font-weight:500;
+    font-size: clamp(0.78rem, 2vw, 0.88rem);
+    color: var(--rose-deep);
+    opacity:0.85;
+  }
+
+  .cake{
+    position:relative;
+    width: 92px;
+    height: 70px;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cake svg{ width:100%; height:100%; overflow:visible; }
+
+  .flame{
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: flicker 1s ease-in-out infinite;
+  }
+  .flame1{ animation-delay: 0s; }
+  .flame2{ animation-delay: 0.15s; }
+  .flame3{ animation-delay: 0.3s; }
+
+  .cake.blown .flame{ opacity:0; transition: opacity 0.3s ease; animation:none; }
+  .cake.blown .smoke{ opacity:1; }
+  .smoke{
+    opacity:0;
+    transition: opacity 0.5s ease 0.2s;
+  }
+
+  .wish-msg{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size: clamp(0.8rem, 2vw, 0.92rem);
+    color: var(--rose-deep);
+    opacity:0;
+    height:0;
+    overflow:hidden;
+    transition: opacity 0.6s ease;
+  }
+  .cake-wrap.wished .wish-msg{
+    opacity:1;
+    height:auto;
+    animation: popIn 0.5s ease;
+  }
+
+  /* heart tap easter egg on the greeting */
+  .greeting{ cursor:pointer; position:relative; }
+  .heart-pop{
+    position:absolute;
+    left:50%;
+    bottom:0;
+    pointer-events:none;
+    font-size:1.1rem;
+    animation: floatHeart 1.4s ease-out forwards;
+    z-index:20;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; }
+    .petal{ display:none; }
+    .env-letter, .env-flap, .envelope{ transition-duration:0.01ms !important; }
+  }
+
+  @media (max-width:900px){
+    .envelope-stage.grow .env-letter{
+      width: 90vw;
+      max-height: 90vh;
+    }
+  }
+
+  @media (max-width:480px){
+    .scene{ padding: 5vh 4vw; }
+    .envelope-stage.grow .env-letter{
+      width: 92vw;
+      max-height: 92vh;
+      border-radius: 18px;
+      padding: 1.6rem 1.1rem;
+    }
+    .frame{ inset:-10px; border-radius:16px; }
+    .corner{ width:28px; height:28px; }
+    .cake{ width:80px; height:62px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="petals" id="petals"></div>
+<div class="glow"></div>
+
+<svg class="corner-sprig sprig-tl" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M4 4C30 10 40 30 46 60" stroke="#c9a15a" stroke-width="1.4" fill="none" opacity="0.6"/>
+  <ellipse cx="18" cy="16" rx="9" ry="13" fill="#dd93a8" opacity="0.85" transform="rotate(-20 18 16)"/>
+  <ellipse cx="30" cy="26" rx="8" ry="11" fill="#e8a9bb" opacity="0.8" transform="rotate(15 30 26)"/>
+  <ellipse cx="12" cy="34" rx="7" ry="10" fill="#cdb4d8" opacity="0.75" transform="rotate(50 12 34)"/>
+  <circle cx="40" cy="46" r="3" fill="#c9a15a" opacity="0.7"/>
+</svg>
+
+<svg class="corner-sprig sprig-br" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M116 116C90 110 80 90 74 60" stroke="#c9a15a" stroke-width="1.4" fill="none" opacity="0.6"/>
+  <ellipse cx="102" cy="104" rx="9" ry="13" fill="#dd93a8" opacity="0.85" transform="rotate(-20 102 104)"/>
+  <ellipse cx="90" cy="94" rx="8" ry="11" fill="#e8a9bb" opacity="0.8" transform="rotate(15 90 94)"/>
+  <ellipse cx="108" cy="86" rx="7" ry="10" fill="#cdb4d8" opacity="0.75" transform="rotate(50 108 86)"/>
+  <circle cx="80" cy="74" r="3" fill="#c9a15a" opacity="0.7"/>
+</svg>
+
+<div class="scene">
+  <div class="envelope-stage" id="envStage">
+
+    <div class="envelope" id="envelope">
+      <div class="envelope-body"></div>
+      <div class="env-pocket"></div>
+
+      <div class="env-letter" id="envLetter">
+        <span class="peek">a little something<br>for you :P</span>
+
+        <div class="card" id="mainCard">
+          <div class="frame"></div>
+          <div class="corner tl">
+            <svg viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 2C2 2 20 2 20 20" stroke="#c9a15a" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="9" cy="9" r="3" fill="#dd93a8" opacity="0.8"/>
+              <circle cx="16" cy="5" r="2" fill="#cdb4d8" opacity="0.8"/>
+            </svg>
+          </div>
+          <div class="corner tr">
+            <svg viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 2C2 2 20 2 20 20" stroke="#c9a15a" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="9" cy="9" r="3" fill="#dd93a8" opacity="0.8"/>
+              <circle cx="16" cy="5" r="2" fill="#cdb4d8" opacity="0.8"/>
+            </svg>
+          </div>
+          <div class="corner bl">
+            <svg viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 2C2 2 20 2 20 20" stroke="#c9a15a" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="9" cy="9" r="3" fill="#dd93a8" opacity="0.8"/>
+              <circle cx="16" cy="5" r="2" fill="#cdb4d8" opacity="0.8"/>
+            </svg>
+          </div>
+          <div class="corner br">
+            <svg viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 2C2 2 20 2 20 20" stroke="#c9a15a" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="9" cy="9" r="3" fill="#dd93a8" opacity="0.8"/>
+              <circle cx="16" cy="5" r="2" fill="#cdb4d8" opacity="0.8"/>
+            </svg>
+          </div>
+
+          <svg class="bloom" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <ellipse cx="50" cy="30" rx="14" ry="20" fill="#dd93a8" opacity="0.9" transform="rotate(0 50 50)"/>
+              <ellipse cx="50" cy="30" rx="14" ry="20" fill="#e8a9bb" opacity="0.85" transform="rotate(72 50 50)"/>
+              <ellipse cx="50" cy="30" rx="14" ry="20" fill="#dd93a8" opacity="0.9" transform="rotate(144 50 50)"/>
+              <ellipse cx="50" cy="30" rx="14" ry="20" fill="#e8a9bb" opacity="0.85" transform="rotate(216 50 50)"/>
+              <ellipse cx="50" cy="30" rx="14" ry="20" fill="#dd93a8" opacity="0.9" transform="rotate(288 50 50)"/>
+              <circle cx="50" cy="50" r="9" fill="#c9a15a"/>
+            </g>
+          </svg>
+
+          <p class="eyebrow">a little late, hehe sorry :3</p>
+          <h1 class="greeting" id="greetingText">Belated Happy Birthday</h1>
+          <p class="sub">— though the day has passed, the wish hasn't faded —</p>
+
+          <svg class="divider" viewBox="0 0 90 22" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="11" x2="30" y2="11" stroke="#c9a15a" stroke-width="1"/>
+            <line x1="60" y1="11" x2="90" y2="11" stroke="#c9a15a" stroke-width="1"/>
+            <ellipse cx="45" cy="11" rx="6" ry="9" fill="#dd93a8" transform="rotate(0 45 11)"/>
+            <ellipse cx="45" cy="11" rx="6" ry="9" fill="#e8a9bb" transform="rotate(60 45 11)" opacity="0.85"/>
+            <ellipse cx="45" cy="11" rx="6" ry="9" fill="#cdb4d8" transform="rotate(120 45 11)" opacity="0.85"/>
+            <circle cx="45" cy="11" r="3" fill="#c9a15a"/>
+          </svg>
+
+          <p class="message">
+            I know I'm a little behind, but some wishes are worth sending anyway.
+            I  hope this can do hahshahsahsh
+            Wishing you endless joy, beauty, and love — today and always.
+          </p>
+
+          <p class="signoff">with warmth, and a little bit of blush 🌸 (psst — tap the cake below)</p>
+
+          <div class="cake-wrap" id="cakeWrap">
+            <p class="cake-hint">Three candles for the birthday you already had — make a wish bago blow!</p>
+            <div class="cake" id="cakeBtn" title="tap to blow out the candles">
+              <svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+                <path class="flame flame1" d="M45 14C41 8 43 2 45 -2C47 2 49 8 45 14Z" fill="#f2a33c"/>
+                <path class="flame flame2" d="M60 8C56 1 58 -6 60 -10C62 -6 64 1 60 8Z" fill="#f2a33c"/>
+                <path class="flame flame3" d="M75 14C71 8 73 2 75 -2C77 2 79 8 75 14Z" fill="#f2a33c"/>
+                <g class="smoke">
+                  <path d="M60 -6C56 -14 64 -18 60 -26" stroke="#c9b8bd" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </g>
+                <rect x="43" y="14" width="4" height="14" fill="#e8cf9c"/>
+                <rect x="58" y="8" width="4" height="16" fill="#e8cf9c"/>
+                <rect x="73" y="14" width="4" height="14" fill="#e8cf9c"/>
+                <rect x="15" y="28" width="90" height="26" rx="4" fill="#f6dde2"/>
+                <rect x="15" y="28" width="90" height="8" rx="4" fill="#fff" opacity="0.6"/>
+                <path d="M15 30C25 22 35 22 45 30C55 38 65 38 75 30C85 22 95 22 105 30V54H15Z" fill="#dd93a8"/>
+                <rect x="10" y="52" width="100" height="30" rx="6" fill="#e8a9bb"/>
+                <rect x="10" y="52" width="100" height="8" fill="#f3c9d6" opacity="0.7"/>
+              </svg>
+            </div>
+            <p class="wish-msg" id="wishMsg">wish made, sealed, and hopefully guaranteed to come true :D</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="env-flap" id="envFlap">
+        <svg viewBox="0 0 340 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="0,0 340,0 170,140" fill="#e79bb0"/>
+          <polygon points="0,0 170,140 0,10" fill="#dd93a8"/>
+          <polygon points="340,0 170,140 340,10" fill="#d489a0"/>
+        </svg>
+        <svg class="env-seal" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="30" r="26" fill="#c9a15a"/>
+          <circle cx="30" cy="30" r="26" fill="none" stroke="#e8cf9c" stroke-width="1.5"/>
+          <path d="M30 16C34 20 40 22 30 40C20 22 26 20 30 16Z" fill="#fdf6f0" opacity="0.9"/>
+        </svg>
+      </div>
+    </div>
+
+    <p class="hint">tap the envelope to open ✉️</p>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const stage = document.getElementById('envStage');
+    const envelope = document.getElementById('envelope');
+    let opened = false;
+
+    envelope.addEventListener('click', function(){
+      if(opened) return;
+      opened = true;
+      stage.classList.add('opened');
+      setTimeout(function(){
+        stage.classList.add('grow');
+      }, 700);
+    });
+  })();
+
+  (function(){
+    const container = document.getElementById('petals');
+    const colors = ['#dd93a8', '#e8a9bb', '#cdb4d8', '#f3c9d6'];
+    const count = window.innerWidth < 480 ? 10 : 16;
+
+    for(let i = 0; i < count; i++){
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+
+      const size = 10 + Math.random() * 12;
+      const left = Math.random() * 100;
+      const fallDuration = 9 + Math.random() * 8;
+      const swayDuration = 3 + Math.random() * 3;
+      const delay = Math.random() * 10;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      petal.style.left = left + 'vw';
+      petal.style.animationDuration = fallDuration + 's, ' + swayDuration + 's';
+      petal.style.animationDelay = '-' + delay + 's, -' + (Math.random()*3) + 's';
+
+      petal.innerHTML =
+        '<svg width="' + size + '" height="' + size + '" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M10 0C14 4 20 6 10 20C0 6 6 4 10 0Z" fill="' + color + '"/>' +
+        '</svg>';
+
+      container.appendChild(petal);
+    }
+  })();
+
+  // sweet interactive cake: tap to "blow out" candles
+  (function(){
+    const cakeWrap = document.getElementById('cakeWrap');
+    const cake = document.getElementById('cakeBtn');
+    cake.addEventListener('click', function(){
+      if(cake.classList.contains('blown')) return;
+      cake.classList.add('blown');
+      cakeWrap.classList.add('wished');
+    });
+  })();
+
+  // playful easter egg: tap the greeting for floating hearts
+  (function(){
+    const greeting = document.getElementById('greetingText');
+    const hearts = ['💗','💛','💕','✨'];
+    greeting.addEventListener('click', function(e){
+      const heart = document.createElement('span');
+      heart.className = 'heart-pop';
+      heart.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+      const rect = greeting.getBoundingClientRect();
+      const offsetX = (e.clientX - rect.left) || rect.width/2;
+      heart.style.left = offsetX + 'px';
+      greeting.appendChild(heart);
+      setTimeout(function(){ heart.remove(); }, 1500);
+    });
+    const msg = document.querySelector(".message");
+const text = msg.textContent.trim();
+msg.textContent = "";
+
+let i = 0;
+function typeText(){
+    if(i < text.length){
+        msg.textContent += text.charAt(i++);
+        setTimeout(typeText, 50);
+    }
+}
+
+setTimeout(typeText, 1600); // after the letter expands
+
+document.addEventListener("click", e=>{
+    const s = document.createElement("span");
+    s.textContent = "✨";
+    s.style.position = "fixed";
+    s.style.left = e.clientX + "px";
+    s.style.top = e.clientY + "px";
+    s.style.pointerEvents = "none";
+    s.style.animation = "floatHeart 1.2s ease-out forwards";
+    document.body.appendChild(s);
+
+    setTimeout(()=>s.remove(),1200);
+});
+  })();
+</script>
+
+</body>
+</html>
